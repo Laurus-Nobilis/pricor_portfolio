@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 413361850
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: dialogs
+      Dependencies: {}

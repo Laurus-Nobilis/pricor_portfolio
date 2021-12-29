@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 835d08ae5b4a6f941b757f73c59eb8f9, type: 3}
+  m_Name: ItemMaster
+  m_EditorClassIdentifier: 
+  items:
+  - id: 0
+    type: 0
+    name: "\u30DD\u30FC\u30B7\u30E7\u30F3"
+    asset_id: liquid_poti01_a005
+    value: 0
+    cost: 25
+  - id: 1
+    type: 0
+    name: "\u30AD\u30ED\u30DD\u30FC\u30B7\u30E7\u30F3"
+    asset_id: liquid_poti01_a006
+    value: 0
+    cost: 100
+  - id: 2
+    type: 0
+    name: "\u30E1\u30AC\u30DD\u30FC\u30B7\u30E7\u30F3"
+    asset_id: liquid_poti01_a004
+    value: 0
+    cost: 500
+  - id: 3
+    type: 0
+    name: "\u30A8\u30FC\u30C6\u30EB"
+    asset_id: liquid_poti01_a002
+    value: 0
+    cost: 50
+  - id: 4
+    type: 0
+    name: "\u30AD\u30ED\u30A8\u30FC\u30C6\u30EB"
+    asset_id: liquid_poti01_a001
+    value: 0
+    cost: 150
+  - id: 5
+    type: 0
+    name: "\u30E1\u30AC\u30A8\u30FC\u30C6\u30EB"
+    asset_id: liquid_poti01_a009
+    value: 0
+    cost: 750
+  - id: 6
+    type: 1
+    name: "Exp\u30DD\u30FC\u30B7\u30E7\u30F3"
+    asset_id: liquid_poti01_a009
+    value: 120
+    cost: 750
+  - id: 7
+    type: 1
+    name: "Exp\u30DD\u30FC\u30B7\u30E7\u30F3\u5927"
+    asset_id: liquid_poti01_a009
+    value: 1000
+    cost: 750
+  - id: 8
+    type: 1
+    name: "Exp\u30DD\u30FC\u30B7\u30E7\u30F3\u8D85"
+    asset_id: liquid_poti01_a009
+    value: 800000
+    cost: 999999

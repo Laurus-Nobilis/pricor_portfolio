@@ -1,0 +1,19 @@
+{
+    "name": "PMasterEditor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:9be31affbc08f3e4d9b781d2cab2ce39",
+        "GUID:c368a5af89566ea4bb59380c231e39b1"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
