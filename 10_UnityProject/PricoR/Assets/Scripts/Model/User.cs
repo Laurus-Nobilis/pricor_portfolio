@@ -2,7 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-
+/*
+ * Model 説明
+ *  ユーザーデータ、マスターデータの取得・操作は具象Modelクラスが行う。
+ *  各種データごとにModelを継承して具象Modelクラスを定義する事。
+ *  
+ * 現状
+ *  具象ModelとDataは 1対1 の関係で構築する。（課題 1対多 になりそうだが。）
+ * 
+ * 例：作成)
+ *  Abxデータを作成する場合
+ *      AbxModel : Model<Abx>{} //クラス
+ *      Abx{} //クラス
+ * 以上2クラス作成する。
+ * 
+ * 例：利用側)
+ *  var abx = Models.Instance.GetAbx();
+ * 
+ */
+/// <summary>
+/// 
+/// </summary>
 public class UserModel : Model<User>
 {
     const string user_id = "user_id";

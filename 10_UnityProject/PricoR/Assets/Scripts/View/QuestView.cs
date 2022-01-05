@@ -11,7 +11,7 @@ public class QuestView : MonoBehaviour, IMenuView
     [SerializeField] Animator _anim;
     [SerializeField] RectTransform _content;//リストビューの入れ物。
     [SerializeField] QuestCell _srcCell;   //セル
-    [SerializeField] RectTransform _questReady;
+    [SerializeField] QuestReadyView _questReady;
 
     Quest _questData;   // Questマスタ
 
@@ -50,13 +50,7 @@ public class QuestView : MonoBehaviour, IMenuView
 
     private void OnSelectedToReady(int quest)
     {
-        Director.Instance.TouchGuard.SetEnable(true);
-        _questReady.gameObject.SetActive(true);
-        _questReady.localScale = new Vector3(1f, 0f, 1f);
-        _questReady.DOScaleY(1f, 0.3f)
-            .OnComplete(() =>
-            {
-                Director.Instance.TouchGuard.SetEnable(false);
-            });
+        _questReady.FadeIn();
+        
     }
 }
