@@ -9,7 +9,7 @@ using DG.Tweening;
 public class QuestView : MonoBehaviour, IMenuView
 {
     [SerializeField] Animator _anim;
-    [SerializeField] RectTransform _content;//リストビューの入れ物。
+    [SerializeField] RectTransform _questContent;//リストビューの入れ物。
     [SerializeField] QuestCell _srcCell;   //セル
     [SerializeField] QuestReadyView _questReady;
 
@@ -30,7 +30,6 @@ public class QuestView : MonoBehaviour, IMenuView
     async void PlayEnd()
     {
         await UniTask.WaitUntil(() => _anim.IsStop(0));// GetCurrentAnimatorStateInfo(0).normalizedTime >= 1);
-
         gameObject.SetActive(false);
     }
 
@@ -43,7 +42,7 @@ public class QuestView : MonoBehaviour, IMenuView
         _questData = Resources.Load("Master/Quest") as Quest;
         foreach (var elm in _questData.dataArray)
         {
-            var cell = GameObject.Instantiate(_srcCell, _content);
+            var cell = GameObject.Instantiate(_srcCell, _questContent);
             cell?.SetData(elm.Name, elm.Id, x => OnSelectedToReady(x));
         }
     }

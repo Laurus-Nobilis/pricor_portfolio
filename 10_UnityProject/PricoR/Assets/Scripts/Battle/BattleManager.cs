@@ -4,6 +4,16 @@ using UnityEngine;
 using Photon.Pun;
 using UnityEngine.SceneManagement;
 
+
+/// <summary>
+/// シーン。ステージ制御：
+/// ステージ選択後の流れ。
+///     シーンマネージャーからシーンのロード。
+/// ・対応するプレファブのロード。
+/// ・シーンのAddtive
+/// </summary>
+
+
 public class BattleManager : MonoBehaviour
 {
     [SerializeField] PhotonBattleController _gameMaker;
@@ -20,7 +30,7 @@ public class BattleManager : MonoBehaviour
     {
         // マウスカーソルを制御
         Cursor.lockState = CursorLockMode.Locked;
-
+        
         _startWait = new WaitForSeconds(_startDelay);
         _endWait = new WaitForSeconds(_endDelay);
         _gameMaker.PlayerSpawn();
@@ -29,12 +39,25 @@ public class BattleManager : MonoBehaviour
         //タップエフェクト無効
         Director.Instance.TapDisable();
     }
+
     private void OnDisable()
     {
         Cursor.lockState = CursorLockMode.None;
 
         //タップエフェクト有効
         Director.Instance.TapEnable();
+    }
+
+    private void LoadStage()
+    {
+        //
+        //auto st = Director.Instance.GetInGameStatus();
+        //
+        // プレファブ読み込みなのか、シーンのAddtiveなのか
+        //  事前にすべてのシーンを登録しておくのはめんどくさいぞ・・・それにアプリのビルドが必要になる。
+        //　アセバンにシーンを追加して読み込めたりするのか？
+        //　＝＞可能らしい　https://tsubakit1.hateblo.jp/entry/2016/08/23/233604　
+
     }
 
     private IEnumerator GameLoop()

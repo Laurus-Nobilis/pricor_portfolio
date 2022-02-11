@@ -12,6 +12,9 @@ public class PlayerCamera : MonoBehaviourPunCallbacks
     [SerializeField] private float _turnSpeed = 10.0f;
     Quaternion _hRot;
     Quaternion _vRot;
+    float _movX = 0;
+    float _movY = 0;
+    bool _moveCamera = true;
 
     //Property
     public Camera TrackCamera { get { return _cam; } }
@@ -31,6 +34,9 @@ public class PlayerCamera : MonoBehaviourPunCallbacks
 
         _vRot = Quaternion.Euler(30, 0, 0);
         _hRot = Quaternion.identity;
+        RotateCamera(0, 0);
+        _cam.transform.position = CalcCamPosition();
+        _cam.transform.LookAt(_tgt.position + _tgtDir);
     }
 
     private void FixedUpdate()
@@ -39,10 +45,19 @@ public class PlayerCamera : MonoBehaviourPunCallbacks
         {
             return;
         }
-        var x = Input.GetAxis("Mouse X");
-        var y = -Input.GetAxis("Mouse Y");
 
-        RotateCamera(x,y);
+        if (Input.GetMouseButtonDown(1))
+        {
+            _moveCamera = !_moveCamera;
+        }
+
+        _movY = _movX = 0;
+        if (_moveCamera)
+        {
+            _movX = Input.GetAxis("Mouse X");
+            _movY = -Input.GetAxis("Mouse Y");
+        }
+        RotateCamera(_movX, _movY);
 
         _cam.transform.position = CalcCamPosition();
         _cam.transform.LookAt(_tgt.position + _tgtDir);

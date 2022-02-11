@@ -1,0 +1,7 @@
+<UXML xmlns:ui="UnityEngine.UIElements" xmlns:ue="UnityEditor.UIElements">
+   <ui:VisualElement name="row" class="container">
+       <ui:Label text="TEST Script - Custom Inspector" />
+       <ue:PropertyField binding-path="tankName" name="tank-name-field" />
+       <ue:PropertyField binding-path="tankSize" name="tank-size-field" />
+   </ui:VisualElement>
+</UXML>

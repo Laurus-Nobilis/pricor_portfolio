@@ -64,7 +64,9 @@ public class Enemy : MonoBehaviour
             //  そもそもTagが文字列比較というのも良く思えない。
             //  別案：Managerクラスで中央集権的にやるのがいいかも知れない。
 
-
+            Debug.Log("HIT! OnDamaged!");
+            _health -= 1;//(仮)
+            //一度当たったら数秒間同じ物には当たらない事。
         }
     }
 

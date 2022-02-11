@@ -253,7 +253,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
                                                                                // velocity = transform.TransformDirection(velocity);
 
         _isPlayWalkingAudio = false;
-        if (attack && !IsAttack())
+        //攻撃可能か？
+        if (attack && !IsAttack() && !IsJump())
         {
             Attack();
         }

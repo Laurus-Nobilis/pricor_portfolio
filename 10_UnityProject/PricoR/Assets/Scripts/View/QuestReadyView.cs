@@ -104,6 +104,7 @@ public class QuestReadyView : MonoBehaviour
     async void LoadBattle()
     {
         //TODO: ƒpƒ‰ƒƒ^İ’è‚È‚Ç
+
         await SceneManager.LoadSceneAsync("Battle");
     }
 
