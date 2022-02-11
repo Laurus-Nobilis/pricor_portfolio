@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2676316222
+CRC: 3569364140
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 0a3fe1bad5eec90dbdb41ae71b5078bd
+    Hash: c58902b7dc750563ff17433b4d83678b
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 3cc2c4d05513ae5256daf12a8bdb5997
+    Hash: bef59e29479f266f3263a5b8f59c2c20
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -24,9 +24,17 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: d199490a83bb2b844b9695cbf13b01ef, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: fbf5f71b449121443b9f0d30fbd513a3, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: db52dd1efc6adff4c95f2640ee952772, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 128
@@ -35,10 +43,13 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 222
   Script: {instanceID: 0}
+- Class: 223
+  Script: {instanceID: 0}
 - Class: 224
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers: []
 Assets:
 - Assets/Prefab/ErrorDialog.prefab
+- Assets/Prefab/CommonDialog_Canvas.prefab
 - Assets/Prefab/InputNameDialog.prefab
 Dependencies: []

@@ -93,6 +93,8 @@ public class QuestReadyView : MonoBehaviour
 
     public void GotoSolo()
     {
+        //GenDialog.ShowOkCancel("•\‘è","–{•¶", OkEvent, CancelEvent);
+
         LoadBattle();
     }
 

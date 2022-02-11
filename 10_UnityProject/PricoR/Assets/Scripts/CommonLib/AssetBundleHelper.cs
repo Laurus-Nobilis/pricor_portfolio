@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using UnityEngine.Assertions;
+
 namespace CommonLib
 {
     /// <summary>
-    /// TODO:　二重ロード防止のために、状態を持つことになったので staticメンバー をやめておきたい。かといってシングルトンにはしない。さてどうする？=>まぁ結局メモリは取るので、事前に開けとくかそういうメモリどう使うか的アプローチでよかろう。つまるところ参照型はstaticでもいいよって事。キャッシュでのヒープをどうするかは別途。
-    /// AssetBundleManager的な物を、
+    /// 二重ロード防止のために、状態を持つことになった。
+    /// 
     /// 注意：
-    ///     このクラスを経由せずに AssetBundleがロードされた場合、二重ロードが起こりうる。もし生で使われていた場合回避策か制約を設けたい所だが。
+    ///     このクラスを経由せずに AssetBundleがロードされた場合、二重ロードが起こりうる。だから生で呼び出されないようにする。
     /// </summary>
     public class AssetBundleHelper : Object
     {

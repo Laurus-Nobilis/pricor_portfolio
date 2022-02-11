@@ -16,8 +16,8 @@ public class Footer : MonoBehaviour, IMenuView
     [SerializeField] Animator _anim;
     List<Button> _btns = new List<Button>();//< めんどくさいかな。ボタン全部ON/OFFするための。
 
+    // 使用者側がObserbableを通して通知を得る。
     Subject<MainMenuManager.ViewType> _subject = new Subject<MainMenuManager.ViewType>();
-
     public IObservable<MainMenuManager.ViewType> Observable { get => _subject.AsObservable(); }
 
     public void FadeIn()
