@@ -8,70 +8,74 @@ using System;
 using UnityEngine.SceneManagement;
 using System.Linq;
 
+// MEMO: prefabã‚’ã‚¢ã‚»ãƒƒãƒˆãƒãƒ³ãƒ‰ãƒ«ã‹ã‚‰èª­ã¿è¾¼ã‚“ã§ã‚‹ãŸã‚ã«ã€å¤‰æ›´æ™‚ã«ãã®æ›´æ–°å¯¾å¿œã‚’å¿˜ã‚Œã‚‹ã¨ãƒã‚°ã‚‹ã€‚:æ³¨æ„
+
 /// <summary>
-/// ”Ä—pƒ_ƒCƒAƒƒOB
-/// static ‚Å‚Ç‚±‚©‚ç‚Å‚àŒÄ‚Ño‚·B
-/// ‚»‚ÌÛprefab‚ğ“Ç‚İ‚ŞB
+/// æ±ç”¨ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã€‚
+/// static ã§ã©ã“ã‹ã‚‰ã§ã‚‚å‘¼ã³å‡ºã™ã€‚
+/// ãã®éš›prefabã‚’èª­ã¿è¾¼ã‚€ã€‚
 /// </summary>
 public class CommonDialogOkCancel : DialogBase
 {
     [SerializeField] Button _okButton;
     [SerializeField] Button _cancelButton;
+    [SerializeField] Text _text;
     
-    GameObject _root;//•Â‚¶‚éÛ‚ÉDestroy‘ÎÛB
+    GameObject _root;//é–‰ã˜ã‚‹éš›ã«Destroyå¯¾è±¡ã€‚
 
     public static void Show()
     {
-        Show(GetUICamera(), Director.Instance.transform, () => { }, () => { });
+        Show(GetUICamera(), Director.Instance.transform, "ãƒ†ã‚¹ãƒˆ", () => { }, () => { });
     }
 
     public static void ShowOverlay()
     {
-        ShowOverlay(Director.Instance.transform, ()=>Debug.Log("OnClick!!"), null);
+        ShowOverlay(Director.Instance.transform, "ãƒ†ã‚¹ãƒˆ", ()=>Debug.Log("OnClick!!"), null);
     }
 
-    public static void Show(Action cbkOk, Action cbkCancel)
+    public static void Show(string message, Action cbkOk, Action cbkCancel)
     {
-        Show(GetUICamera(), Director.Instance.transform, cbkOk, cbkCancel);
+        Show(GetUICamera(), Director.Instance.transform, message, cbkOk, cbkCancel);
     }
 
     /// <summary>
-    /// ScreenSpace - Camera@‚É‚æ‚é•\¦B
+    /// ScreenSpace - Cameraã€€ã«ã‚ˆã‚‹è¡¨ç¤ºã€‚
     /// </summary>
     /// <param name="ui_camera"></param>
     /// <param name="parent"></param>
     /// <param name="cbkOk"></param>
     /// <param name="cbkCancel"></param>
-    public static void Show(Camera ui_camera, Transform parent, Action cbkOk, Action cbkCancel)
+    public static void Show(Camera ui_camera, Transform parent, string message, Action cbkOk, Action cbkCancel)
     {
         //await load prefab();
         Assert.IsNotNull(ui_camera);
 
         var go = InstantiatePrefab(parent);
-        var dlg = go.GetComponentInChildren<CommonDialogOkCancel>();
-
-        Assert.IsNotNull(dlg);
-
         var canvas = go.GetComponentInParent<Canvas>();
-        //MARK: ScreenSpace - Camera‚É‚·‚éê‡‚ÌƒJƒƒ‰İ’è‚ğ‚µ‚½B„ - Overlay‚ğ‚µ‚Ä‚¨‚­B
         canvas.worldCamera = ui_camera;
         canvas.renderMode = RenderMode.ScreenSpaceCamera;
         canvas.sortingLayerName = "UI";
         canvas.planeDistance = 1;
 
+        var dlg = go.GetComponentInChildren<CommonDialogOkCancel>();
+
+        Assert.IsNotNull(dlg);
+
         dlg.SetRoot(canvas);
         dlg.SetCallback(cbkOk, cbkCancel);
+        dlg._text.text = message;
     }
 
     /// <summary>
-    /// ScreenSpace - Overlay ‚É‚æ‚é•\¦B
+    /// ScreenSpace - Overlay ã«ã‚ˆã‚‹è¡¨ç¤ºã§ã€ã‚·ãƒ¼ãƒ³ç›´ä¸‹ã«ç”Ÿæˆè¿½åŠ ã™ã‚‹ã€‚
     /// </summary>
     /// <param name="parent"></param>
     /// <param name="cbkOk"></param>
     /// <param name="cbkCancel"></param>
-    public static void ShowOverlay(Transform parent, Action cbkOk, Action cbkCancel, int sortOrder = 100)
+    /// <param name="sortOrder"></param>
+    public static void ShowOverlay(string message, Action cbkOk, Action cbkCancel, int sortOrder = 100)
     {
-        var go = InstantiatePrefab(parent);
+        var go = InstantiatePrefab(null);
         var dlg = go.GetComponentInChildren<CommonDialogOkCancel>();
 
         Assert.IsNotNull(dlg);
@@ -82,6 +86,29 @@ public class CommonDialogOkCancel : DialogBase
 
         dlg.SetRoot(canvas);
         dlg.SetCallback(cbkOk, cbkCancel);
+        dlg._text.text = message;
+    }
+
+    /// <summary>
+    /// ScreenSpace - Overlay ã«ã‚ˆã‚‹è¡¨ç¤ºã€‚
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="cbkOk"></param>
+    /// <param name="cbkCancel"></param>
+    public static void ShowOverlay(Transform parent, string message, Action cbkOk, Action cbkCancel, int sortOrder = 100)
+    {
+        var go = InstantiatePrefab(parent);
+        var canvas = go.GetComponentInParent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = sortOrder;
+
+        var dlg = go.GetComponentInChildren<CommonDialogOkCancel>();
+
+        Assert.IsNotNull(dlg);
+
+        dlg.SetRoot(canvas);
+        dlg.SetCallback(cbkOk, cbkCancel);
+        dlg._text.text = message;
     }
 
     static Camera GetUICamera()
@@ -94,8 +121,16 @@ public class CommonDialogOkCancel : DialogBase
     static GameObject InstantiatePrefab(Transform parent)
     {
         var prefab = CommonLib.AssetBundleHelper.LoadDialog("Assets/Prefab/CommonDialog_Canvas.prefab");
-        var go = Instantiate(prefab, parent);
-        //var go = Instantiate(prefab);//ƒV[ƒ“’¼‰º‚É¶¬‚³‚ê‚éB
+        GameObject go = null;
+        if (parent == null)
+        {
+            //ã‚·ãƒ¼ãƒ³ç›´ä¸‹ã«ç”Ÿæˆã•ã‚Œã‚‹ã€‚
+            go = Instantiate(prefab);
+        }
+        else
+        {
+            go = Instantiate(prefab, parent);
+        }
         Assert.IsNotNull(go);
 
         return go;

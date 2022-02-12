@@ -4,10 +4,12 @@ using Photon.Realtime;
 using System.Linq;
 using UnityEngine;
 using UniRx;
+using UniRx.Triggers;
 using System.Collections.Generic;
 using ExitGames.Client.Photon;
 using DG.Tweening;
-//ƒNƒ‰ƒX‚ª”ì‘å‚µ‚½Œ‚ÍAŠÔ“I–â‘è‚ª‚ ‚é‚Ì‚Å‚Ü‚¸“®ì‚³‚¹‚é‚±‚Æ‚ğ—Dæ‚·‚éB
+using System;
+//ã‚¯ãƒ©ã‚¹ãŒè‚¥å¤§ã—ãŸä»¶ã¯ã€æ™‚é–“çš„å•é¡ŒãŒã‚ã‚‹ã®ã§ã¾ãšå‹•ä½œã•ã›ã‚‹ã“ã¨ã‚’å„ªå…ˆã™ã‚‹ã€‚
 
 // Photon Loby Room Manager;
 public class PhotonManager : MonoBehaviourPunCallbacks, IPunObservable
@@ -15,30 +17,33 @@ public class PhotonManager : MonoBehaviourPunCallbacks, IPunObservable
     private const int POTON_SEND_RATE = 60;
     public enum Status
     {
+        FadeInComplete,
         Connected,
         ConnectedFailed,
         Disconnected,
     };
 
-    //GUIŒn
-    [SerializeField] Text _status;      //ó‹µ‚ğ•\¦‚³‚¹‚éB
-    [SerializeField] InputDialog _inputDlg;//OK‚ÅƒeƒLƒXƒg‚ğó‚¯æ‚éBA\‘¢l‚¦‚é•K—v‚ ‚éB
-    [SerializeField] Button _createBtn;     //ƒ‹[ƒ€‚ğ¶¬‚µ‚Ä‚»‚±‚É“üº
-    [SerializeField, Tooltip("Join Lobby")] Button _joinLobby;     //lobby‚É“ü‚éBiŸ‚Ìê‡‚Í“ü‚ç‚È‚¢‚æ‚¤‚É‚·‚é „ ƒ‹[ƒ€ì¬Aƒ‰ƒ“ƒ_ƒ€joinj
-    [SerializeField, Tooltip("Join Random")] Button _joinBtn;     //ƒ‰ƒ“ƒ_ƒ€‚Åƒ‹[ƒ€‚ÉÚ‘±‚·‚éB
-    [SerializeField] Button _cancelBtn;     //ƒLƒƒƒ“ƒZƒ‹‚µ‚Ä•Â‚¶‚éB
+    Subject<Status> _subject;
+    IDisposable _disposable;
+    //GUIç³»
+    [SerializeField] Text _status;      //çŠ¶æ³ã‚’è¡¨ç¤ºã•ã›ã‚‹ã€‚
+    [SerializeField] InputDialog _inputDlg;//OKã§ãƒ†ã‚­ã‚¹ãƒˆã‚’å—ã‘å–ã‚‹ã€‚ã€æ§‹é€ è€ƒãˆã‚‹å¿…è¦ã‚ã‚‹ã€‚
+    [SerializeField] Button _createBtn;     //ãƒ«ãƒ¼ãƒ ã‚’ç”Ÿæˆã—ã¦ãã“ã«å…¥å®¤
+    [SerializeField, Tooltip("Join Lobby")] Button _joinLobby;     //lobbyã«å…¥ã‚‹ã€‚ï¼ˆæ¬¡ã®å ´åˆã¯å…¥ã‚‰ãªã„ã‚ˆã†ã«ã™ã‚‹ ï¼ï¼ ãƒ«ãƒ¼ãƒ ä½œæˆã€ãƒ©ãƒ³ãƒ€ãƒ joinï¼‰
+    [SerializeField, Tooltip("Join Random")] Button _joinBtn;     //ãƒ©ãƒ³ãƒ€ãƒ ã§ãƒ«ãƒ¼ãƒ ã«æ¥ç¶šã™ã‚‹ã€‚
+    [SerializeField] Button _cancelBtn;     //ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã—ã¦é–‰ã˜ã‚‹ã€‚
     //Dlg
     [SerializeField] OkDialog _okDialogPrefab;    // Prefab
-    OkDialog _okDlg;    // ƒCƒ“ƒXƒ^ƒ“ƒX
+    OkDialog _okDlg;    // ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
 
-    // ƒ‹[ƒ€ƒŠƒXƒg
+    // ãƒ«ãƒ¼ãƒ ãƒªã‚¹ãƒˆ
     [SerializeField] ScrollRect _listView;
-    [SerializeField, Tooltip("ƒ‹[ƒ€ƒŠƒXƒgƒGƒŒƒƒ“ƒg")] PhotonRoomListElement _element;
+    [SerializeField, Tooltip("ãƒ«ãƒ¼ãƒ ãƒªã‚¹ãƒˆã‚¨ãƒ¬ãƒ¡ãƒ³ãƒˆ")] PhotonRoomListElement _element;
 
     AppSettings _appSettings;
 
     /// <summary>
-    /// ƒIƒuƒWƒFƒNƒg“¯ŠúA‚·‚éƒCƒ“ƒ^[ƒtƒF[ƒXÀ‘•B
+    /// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåŒæœŸã€ã™ã‚‹PUNã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹å®Ÿè£…ã€‚
     /// </summary>
     /// <param name="stream"></param>
     /// <param name="info"></param>
@@ -47,10 +52,56 @@ public class PhotonManager : MonoBehaviourPunCallbacks, IPunObservable
         throw new System.NotImplementedException();
     }
 
+    public void FadeInAndConnect()
+    {
+        if (_subject == null)
+        {
+            _subject = new Subject<Status>();
+        }
+
+        //FadeInã®çµ‚äº†ã‚’å¾…ã¤ï¼‹ã‚³ãƒã‚¯ãƒˆã®çµæœã‚’å¾…ã¤ã€ä¸¡æ–¹çµ‚ã‚ã£ãŸã‚‰ã‚¬ãƒ¼ãƒ‰ã‚’å¤–ã™ã€‚
+        var branch = _subject.Publish();
+        branch.Where(x =>
+            {
+                return x == Status.Disconnected || x == Status.FadeInComplete;
+            })
+            .Buffer(count: 2)
+            .Subscribe(x =>
+            {
+                Director.Instance.TouchGuard.SetEnable(false);
+                _disposable.Dispose();
+            }
+            , x=>Debug.LogError("ã‚¹ãƒˆãƒªãƒ¼ãƒ ã€€ERROR")
+            , () => Debug.Log("ã‚¹ãƒˆãƒªãƒ¼ãƒ ã€€Completed")).AddTo(this);
+        branch.Where(x =>
+            {
+                return x == Status.Connected || x == Status.FadeInComplete;
+            })
+            .Buffer(count: 2)
+            .Subscribe(x =>
+            {
+                Director.Instance.TouchGuard.SetEnable(false);
+                _disposable.Dispose();
+            }
+            , x=>Debug.LogError("ã‚¹ãƒˆãƒªãƒ¼ãƒ ã€€ERROR")
+            , () => Debug.Log("ã‚¹ãƒˆãƒªãƒ¼ãƒ ã€€Completed")).AddTo(this);
+        _disposable = branch.Connect();
+
+        //FadeIn
+        transform.localScale = new Vector3(1f, 0f, 1f);
+        transform.DOScaleY(1f, 0.3f)
+            .OnComplete(() =>
+            {
+                _subject.OnNext(Status.FadeInComplete);
+            });
+        //ã“ã®æ™‚ç‚¹ã‹ã‚‰æœ€åˆã®Photonæ¥ç¶šã‚’é–‹å§‹ã€‚
+        ConnectPhoton();
+    }
+
 
     private void Start()
     {
-        //PhotonNetwork.LoadLevel()‚É‚æ‚éƒV[ƒ“Ø‚è‘Ö‚¦‚Ì“¯Šú
+        //PhotonNetwork.LoadLevel()ã«ã‚ˆã‚‹ã‚·ãƒ¼ãƒ³åˆ‡ã‚Šæ›¿ãˆã®åŒæœŸ
         PhotonNetwork.AutomaticallySyncScene = true;
 
         _createBtn.onClick.AddListener(() => _inputDlg.Show());
@@ -68,7 +119,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     /// <summary>
-    /// ƒXƒe[ƒ^ƒXo—Í‚Æ‚µ‚Ä‚ÌƒeƒLƒXƒg‚ğã‘‚«
+    /// ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹å‡ºåŠ›ã¨ã—ã¦ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’ä¸Šæ›¸ã
     /// </summary>
     /// <param name="str"></param>
     private void SetStatus(string str)
@@ -76,7 +127,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks, IPunObservable
         _status.text = str;
     }
     /// <summary>
-    /// ƒXƒe[ƒ^ƒXo—Í‚Æ‚µ‚Ä‚ÌƒeƒLƒXƒg‚ğ’Ç‰Á
+    /// ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹å‡ºåŠ›ã¨ã—ã¦ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’è¿½åŠ 
     /// </summary>
     /// <param name="str"></param>
     private void AddStatus(string str)
@@ -93,9 +144,10 @@ public class PhotonManager : MonoBehaviourPunCallbacks, IPunObservable
 
         base.OnConnected();
 
+        _subject.OnNext(Status.Connected);
+
         //Check
         Debug.Log("Photon Connected");
-        //_subject.OnNext(Status.Connected);
         _status.text = "OnConnected\n";
     }
 
@@ -110,7 +162,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks, IPunObservable
     /// </remarks>
     public override void OnLeftRoom()
     {
-        SetStatus("‘Şº");
+        SetStatus("é€€å®¤");
     }
 
     /// <summary>
@@ -202,8 +254,9 @@ public class PhotonManager : MonoBehaviourPunCallbacks, IPunObservable
     {
         base.OnDisconnected(cause);
 
+        _subject.OnNext(Status.Disconnected);
+
         Debug.Log("Photon DisConnected");
-        //_subject.OnNext(Status.Disconnected);
         AddStatus("Photon disconnected.");
     }
 
@@ -430,7 +483,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks, IPunObservable
 
 
     /// <summary>
-    /// Å‰‚ÉPhoton‚ÉÚ‘±‚·‚éB
+    /// æœ€åˆã«Photonã«æ¥ç¶šã™ã‚‹ã€‚
     /// </summary>
     public void ConnectPhoton()
     {
@@ -440,11 +493,11 @@ public class PhotonManager : MonoBehaviourPunCallbacks, IPunObservable
 
         PhotonNetwork.ConnectUsingSettings();
 
-        //ˆê•bŠÔ‚É‘—M‚·‚éƒpƒPƒbƒg”‚ªŒˆ‚Ü‚Á‚Ä‚é‚Ì‚Å‚»‚ê‚ğ•ÏX‚·‚éB
+        //ä¸€ç§’é–“ã«é€ä¿¡ã™ã‚‹ãƒ‘ã‚±ãƒƒãƒˆæ•°ãŒæ±ºã¾ã£ã¦ã‚‹ã®ã§ãã‚Œã‚’å¤‰æ›´ã™ã‚‹ã€‚
         PhotonNetwork.SendRate = POTON_SEND_RATE;
         PhotonNetwork.SerializationRate = POTON_SEND_RATE;
 
-        //ƒV[ƒ“‘JˆÚ‚ğ“¯Šú‚·‚éB
+        //ã‚·ãƒ¼ãƒ³é·ç§»ã‚’åŒæœŸã™ã‚‹ã€‚
         PhotonNetwork.AutomaticallySyncScene = true;
 
     }
@@ -452,19 +505,19 @@ public class PhotonManager : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (room == string.Empty)
         {
-            Debug.LogWarning("Room–¼‚ª–³‚¢B");
+            Debug.LogWarning("RoomåãŒç„¡ã„ã€‚");
             return;
         }
 
         Debug.Log(string.Format("CreateRoom({0})", room));
         /*
-				//roomƒIƒvƒVƒ‡ƒ“
+				//roomã‚ªãƒ—ã‚·ãƒ§ãƒ³
 				RoomOptions roomOptions = new RoomOptions();
-				roomOptions.MaxPlayers = 4; //ƒ‹[ƒ€Å‘ål”
-				roomOptions.IsOpen = true;  //“üº‹–‰Â
-				roomOptions.IsVisible = true;   //ƒƒr[‚©‚çŒ©‚¦‚é•”‰®‚É‚·‚é
+				roomOptions.MaxPlayers = 4; //ãƒ«ãƒ¼ãƒ æœ€å¤§äººæ•°
+				roomOptions.IsOpen = true;  //å…¥å®¤è¨±å¯
+				roomOptions.IsVisible = true;   //ãƒ­ãƒ“ãƒ¼ã‹ã‚‰è¦‹ãˆã‚‹éƒ¨å±‹ã«ã™ã‚‹
 		*/
-        //roomì¬
+        //roomä½œæˆ
         PhotonNetwork.CreateRoom(room);
     }
     public void JoinLobby()
@@ -485,7 +538,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks, IPunObservable
     public void JoinRoom(string roomName)
     {
         Debug.Log(string.Format("JoinRoom({0})", roomName));
-        //room“üº
+        //roomå…¥å®¤
         PhotonNetwork.JoinRoom(roomName);
     }
 
@@ -518,15 +571,15 @@ public class PhotonManager : MonoBehaviourPunCallbacks, IPunObservable
 
     private RoomOptions GetRoomOption()
     {
-        // ƒ‹[ƒ€‚ÌƒJƒXƒ^ƒ€ƒvƒƒpƒeƒB‚Ì‰Šú’l
+        // ãƒ«ãƒ¼ãƒ ã®ã‚«ã‚¹ã‚¿ãƒ ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã®åˆæœŸå€¤
         var initialProps = new Hashtable();
-        initialProps["DisplayName"] = $"{PhotonNetwork.NickName}‚Ì•”‰®";
-        initialProps["Message"] = "’N‚Å‚àQ‰ÁOKI";
+        initialProps["DisplayName"] = $"{PhotonNetwork.NickName}ã®éƒ¨å±‹";
+        initialProps["Message"] = "èª°ã§ã‚‚å‚åŠ OKï¼";
 
-        // ƒƒr[‚Ìƒ‹[ƒ€î•ñ‚©‚çæ“¾‚Å‚«‚éƒJƒXƒ^ƒ€ƒvƒƒpƒeƒBiƒL[‚Ì”z—ñj
+        // ãƒ­ãƒ“ãƒ¼ã®ãƒ«ãƒ¼ãƒ æƒ…å ±ã‹ã‚‰å–å¾—ã§ãã‚‹ã‚«ã‚¹ã‚¿ãƒ ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ï¼ˆã‚­ãƒ¼ã®é…åˆ—ï¼‰
         var propsForLobby = new[] { "DisplayName", "Message" };
 
-        // ì¬‚·‚éƒ‹[ƒ€‚Ìƒ‹[ƒ€İ’è‚ğs‚¤
+        // ä½œæˆã™ã‚‹ãƒ«ãƒ¼ãƒ ã®ãƒ«ãƒ¼ãƒ è¨­å®šã‚’è¡Œã†
         var roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = 4;
         roomOptions.CustomRoomProperties = initialProps;
@@ -547,6 +600,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks, IPunObservable
             gameObject.SetActive(false);
             Director.Instance.TouchGuard.SetEnable(false);
         });
+
+        _status.text = "";
     }
     private void ShowMemberWaitView()
     {
@@ -561,28 +616,28 @@ public class PhotonManager : MonoBehaviourPunCallbacks, IPunObservable
         , () =>
         {
             LeaveRoom();
-            Destroy(_okDlg.gameObject); //TODO:Destroy‚·‚é‚È‚æBƒv[ƒ‹‚É“ü‚ê‚Ä“K‹Xíœ‚©B
+            Destroy(_okDlg.gameObject); //TODO:Destroyã™ã‚‹ãªã‚ˆã€‚ãƒ—ãƒ¼ãƒ«ã«å…¥ã‚Œã¦é©å®œå‰Šé™¤ã‹ã€‚
         }
-        , "Room,‘Ò‹@’†");
+        , "Room,å¾…æ©Ÿä¸­");
 
     }
     private void UpdateRoomProperty(string msg)
     {
-        Debug.LogWarning("RoomProperties‚ªXV‚³‚ê‚½ : " + msg);
+        Debug.LogWarning("RoomPropertiesãŒæ›´æ–°ã•ã‚ŒãŸ : " + msg);
         _okDlg.SetText($"Room\n<RoomPropertiesUpdate>");
     }
     private void ReloadRoomList(List<RoomInfo> roomlist)
     {
-        //TODO: Œ»İ‚ÌƒŠƒXƒg‚ğ•Û‚µ‚Ä‚¨‚­AV‚µ‚¢ƒŠƒXƒg‚ª—ˆ‚½‚çXV‚·‚éBíœ‚³‚ê‚½€–Ú‚Æ’Ç‰Á‚³‚ê‚½€–Ú‚ª‚ ‚éB
+        //TODO: ç¾åœ¨ã®ãƒªã‚¹ãƒˆã‚’ä¿æŒã—ã¦ãŠãã€æ–°ã—ã„ãƒªã‚¹ãƒˆãŒæ¥ãŸã‚‰æ›´æ–°ã™ã‚‹ã€‚å‰Šé™¤ã•ã‚ŒãŸé …ç›®ã¨è¿½åŠ ã•ã‚ŒãŸé …ç›®ãŒã‚ã‚‹ã€‚
 
         List<RoomInfo> exist = new List<RoomInfo>();
         foreach (PhotonRoomListElement child in _listView.content.transform)
         {
-            //LINQ FirstOrDefault . class ‚Ì default ‚Íunullv
+            //LINQ FirstOrDefault . class ã® default ã¯ã€Œnullã€
             var f = roomlist.FirstOrDefault(o => o.Name == child.Name);
             if (f == null)
             {
-                Destroy(child);//“n‚³‚ê‚½ƒŠƒXƒg‚ÉŠÜ‚Ü‚ê‚Ä‚¢‚È‚¢•¨‚ğÁ‚·B
+                Destroy(child);//æ¸¡ã•ã‚ŒãŸãƒªã‚¹ãƒˆã«å«ã¾ã‚Œã¦ã„ãªã„ç‰©ã‚’æ¶ˆã™ã€‚
             }
             else
             {

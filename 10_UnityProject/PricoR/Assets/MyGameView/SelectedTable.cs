@@ -16,12 +16,6 @@ public class SelectedTable : MonoBehaviour
         _icon.enabled = false;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void SetItem(ItemData item)
     {
         _name.text = item.name;

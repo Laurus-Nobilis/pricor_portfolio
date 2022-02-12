@@ -9,18 +9,18 @@ using DG.Tweening;
 using UnityEngine.Assertions;
 
 /// <summary>
-/// RectTransform ‚Ì QuestŒnView
+/// RectTransform ã® Questç³»View
 /// </summary>
 public class QuestReadyView : MonoBehaviour
 {
     [SerializeField] PhotonManager _photonMananger;
-    [SerializeField, Tooltip("•\¦‰Šú‰»")] Transform _photonView;
-    [SerializeField, Tooltip("•\¦‰Šú‰»")] Transform _photonInpuRoomDlg;
+    //[SerializeField, Tooltip("è¡¨ç¤ºåˆæœŸåŒ–")] Transform _photonView;
+    [SerializeField, Tooltip("è¡¨ç¤ºåˆæœŸåŒ–")] Transform _photonInpuRoomDlg;
     [SerializeField] Button _goMulti;
     [SerializeField] Button _goSolo;
     [SerializeField] Button _back;
     ReactiveProperty<bool> _btnSwitcher = new ReactiveProperty<bool>();
-    [SerializeField] RectTransform _panel;//‚±‚Ì‰æ–Ê‚Ìe‚É‚È‚éPanel
+    [SerializeField] RectTransform _panel;//ã“ã®ç”»é¢ã®è¦ªã«ãªã‚‹Panel
     
 
     public void FadeIn()
@@ -59,7 +59,7 @@ public class QuestReadyView : MonoBehaviour
                 _goSolo.interactable = x;
             })
             .AddTo(this);
-        _btnSwitcher.Value = !_photonView.gameObject.activeSelf;
+        _btnSwitcher.Value = !_photonMananger.gameObject.activeSelf;
 
         _goMulti.OnClickAsObservable()
             .Subscribe(x =>
@@ -79,23 +79,24 @@ public class QuestReadyView : MonoBehaviour
 
     public void OnMultiReady()
     {
-        //TODO:@‚±‚ÌTweenƒAƒjƒ[ƒVƒ‡ƒ“‚Í”Ä—p‰»‚µ‚Ä‚­‚¾‚³‚¢B—‚½ˆ—‚ª•ªU‚µ‚Ä‚Ü‚·B
         Director.Instance.TouchGuard.SetEnable(true);
-        _photonView.gameObject.SetActive(true);
-        _photonView.localScale = new Vector3(1f, 0f, 1f);
-        _photonView.DOScaleY(1f, 0.3f)
-            .OnComplete(() =>
-            {
-                Director.Instance.TouchGuard.SetEnable(false);
-            });
-        _photonMananger.ConnectPhoton();
-    }
+
+        //ç”»é¢ã‚’é–‹ã
+        _photonMananger.gameObject.SetActive(true);
+        _photonMananger.FadeInAndConnect();
+   }
 
     public void GotoSolo()
     {
-        //GenDialog.ShowOkCancel("•\‘è","–{•¶", OkEvent, CancelEvent);
-
-        LoadBattle();
+        //GenDialog.ShowOkCancel("æ–‡", OkEvent, CancelEvent);
+        CommonDialogOkCancel.ShowOverlay(
+            "å‡ºæ’ƒï¼"
+            , ()=> {
+                LoadBattle();
+            }
+            , ()=> {
+                Debug.Log("Cancel");
+            });
     }
 
     public void GotoBack()
@@ -105,7 +106,7 @@ public class QuestReadyView : MonoBehaviour
 
     async void LoadBattle()
     {
-        //TODO: ƒpƒ‰ƒƒ^İ’è‚È‚Ç
+        //TODO: ãƒ‘ãƒ©ãƒ¡ã‚¿è¨­å®šãªã©
 
         await SceneManager.LoadSceneAsync("Battle");
     }
