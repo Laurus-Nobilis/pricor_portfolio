@@ -58,34 +58,19 @@ public class PhotonManager : MonoBehaviourPunCallbacks, IPunObservable
         {
             _subject = new Subject<Status>();
         }
-
-        //FadeInの終了を待つ＋コネクトの結果を待つ、両方終わったらガードを外す。
-        var branch = _subject.Publish();
-        branch.Where(x =>
+        //FadeInの終了を待つ＋コネクトの結果を待つ、両方終わったらガードを外す。（2回送信されてくる想定）
+        _disposable = _subject.Where(x =>
             {
-                return x == Status.Disconnected || x == Status.FadeInComplete;
+                return (x == Status.Connected
+                        || x == Status.FadeInComplete
+                        || x == Status.Disconnected);
             })
             .Buffer(count: 2)
             .Subscribe(x =>
             {
                 Director.Instance.TouchGuard.SetEnable(false);
                 _disposable.Dispose();
-            }
-            , x=>Debug.LogError("ストリーム　ERROR")
-            , () => Debug.Log("ストリーム　Completed")).AddTo(this);
-        branch.Where(x =>
-            {
-                return x == Status.Connected || x == Status.FadeInComplete;
-            })
-            .Buffer(count: 2)
-            .Subscribe(x =>
-            {
-                Director.Instance.TouchGuard.SetEnable(false);
-                _disposable.Dispose();
-            }
-            , x=>Debug.LogError("ストリーム　ERROR")
-            , () => Debug.Log("ストリーム　Completed")).AddTo(this);
-        _disposable = branch.Connect();
+            }).AddTo(this);
 
         //FadeIn
         transform.localScale = new Vector3(1f, 0f, 1f);
