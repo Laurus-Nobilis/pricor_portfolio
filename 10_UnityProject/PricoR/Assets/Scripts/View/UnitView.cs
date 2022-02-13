@@ -9,11 +9,17 @@ public class UnitView : MonoBehaviour, IMenuView
 
     public void FadeIn()
     {
+        gameObject.SetActive(true);
+
+        //TODO:DOTween
         _anim.Play("FadeIn");
     }
 
     public void FadeOut()
     {
+        gameObject.SetActive(false);
+
+        //TODO:DOTween
         _anim.Play("FadeOut");
     }
 

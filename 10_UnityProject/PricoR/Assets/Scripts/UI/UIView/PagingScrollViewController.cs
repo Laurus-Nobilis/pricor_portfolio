@@ -13,6 +13,7 @@ using UnityEngine.EventSystems;
 public class PagingScrollViewController
     : ViewController, IBeginDragHandler, IEndDragHandler
 {
+    [SerializeField] PageControl _pageControl = null;
     [SerializeField] float _moveThreshold = 4;
     private bool _isAnimating = false;   //スクロールアニメーション実行中か？
     private Vector2 _destPos;   //移動先座標
@@ -94,12 +95,18 @@ public class PagingScrollViewController
 
         //フラグ：アニメーション中にする。
         _isAnimating = true;
+
+        // ページコントロールを更新する。
+        _pageControl.SetCurrentPage(pageIndex);
     }
 
     private void Start()
     {
         // contentのPaddingを初期化する
         UpdateView();
+        // ページコントロール初期化
+        _pageControl.SetNumberOfPage(CachedScrollRect.content.transform.childCount);
+        _pageControl.SetCurrentPage(0);
     }
 
     private void Update()
