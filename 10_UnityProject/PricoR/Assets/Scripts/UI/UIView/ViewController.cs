@@ -7,7 +7,9 @@ using UnityEngine;
 [RequireComponent(typeof(RectTransform))]
 public class ViewController : MonoBehaviour
 {
-    //ViewのRectTransform
+    //Viewの RectTransformをキャッシュする。
+    //（サイズの取得などでアクセスする機会は少なく無い）
+    //（リビルドを避ける点には注意）
     private RectTransform _cachedRectTransform;
     public RectTransform CachedRectTransform
     {

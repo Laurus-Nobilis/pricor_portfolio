@@ -19,7 +19,7 @@ public class PagingScrollViewController
     private Vector2 _initialPos;    //移動開始座標
     private AnimationCurve _animCurve;  //移動時のアニメーションCurve
     private int _prevPageIndex = 0;  //前ページのインデックス
-
+    private Rect _curViewRect;  //ScrollViewの矩形
     private ScrollRect _scrollRect;
     public ScrollRect CachedScrollRect  //外部からのアクセスさせていいか？ このプロパティにアクセス可能なクラスに制限を付けたいが可能か？
     {
@@ -96,6 +96,24 @@ public class PagingScrollViewController
         _isAnimating = true;
     }
 
+    private void Start()
+    {
+        // contentのPaddingを初期化する
+        UpdateView();
+    }
+
+    private void Update()
+    {
+        //ScrollViewの幅高さの変化を監視
+        if (CachedRectTransform.rect.width != _curViewRect.width
+            || CachedRectTransform.rect.height != _curViewRect.height)
+        {
+            //幅高さ変化したら contentのPaddingを更新する
+
+            UpdateView();
+        }
+    }
+
     private void LateUpdate()
     {
         if(!_isAnimating)
@@ -115,5 +133,18 @@ public class PagingScrollViewController
         //アニメーションカーブを使ってスクロールビューを移動させる。
         var newPos = _initialPos + (_destPos - _initialPos) * _animCurve.Evaluate(Time.time);
         CachedScrollRect.content.anchoredPosition = newPos;
+    }
+
+    // ContentのPaddingを更新する。
+    private void UpdateView()
+    {
+        // ScrollView の矩形を保持
+        _curViewRect = CachedRectTransform.rect;
+
+        // GridLayoutGroupのCellSizeから contentのPaddingを算出する
+        GridLayoutGroup grid = CachedGridLayoutGroup;
+        int paddingH = Mathf.RoundToInt((_curViewRect.width - grid.cellSize.x) * 0.5f);
+        int paddingV = Mathf.RoundToInt((_curViewRect.height - grid.cellSize.y) * 0.5f);
+        grid.padding = new RectOffset(paddingH, paddingH, paddingV, paddingV);
     }
 }
