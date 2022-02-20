@@ -6,11 +6,11 @@ using UnityEngine.SceneManagement;
 
 
 /// <summary>
-/// ƒV[ƒ“BƒXƒe[ƒW§ŒäF
-/// ƒXƒe[ƒW‘I‘ğŒã‚Ì—¬‚êB
-///     ƒV[ƒ“ƒ}ƒl[ƒWƒƒ[‚©‚çƒV[ƒ“‚Ìƒ[ƒhB
-/// E‘Î‰‚·‚éƒvƒŒƒtƒ@ƒu‚Ìƒ[ƒhB
-/// EƒV[ƒ“‚ÌAddtive
+/// ã‚·ãƒ¼ãƒ³ã€‚ã‚¹ãƒ†ãƒ¼ã‚¸åˆ¶å¾¡ï¼š
+/// ã‚¹ãƒ†ãƒ¼ã‚¸é¸æŠå¾Œã®æµã‚Œã€‚
+///     ã‚·ãƒ¼ãƒ³ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã‹ã‚‰ã‚·ãƒ¼ãƒ³ã®ãƒ­ãƒ¼ãƒ‰ã€‚
+/// ãƒ»å¯¾å¿œã™ã‚‹ãƒ—ãƒ¬ãƒ•ã‚¡ãƒ–ã®ãƒ­ãƒ¼ãƒ‰ã€‚
+/// ãƒ»ã‚·ãƒ¼ãƒ³ã®Addtive
 /// </summary>
 
 
@@ -19,7 +19,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] PhotonBattleController _gameMaker;
     public float _startDelay = 3f;
     public float _endDelay = 3f;
-    private WaitForSeconds _startWait;     // Coroutin ‚É‚æ‚é’x‰„
+    private WaitForSeconds _startWait;     // Coroutin ã«ã‚ˆã‚‹é…å»¶
     private WaitForSeconds _endWait;
     private string _nextScene = "MainMenu";
 
@@ -28,7 +28,7 @@ public class BattleManager : MonoBehaviour
 
     private void Start()
     {
-        // ƒ}ƒEƒXƒJ[ƒ\ƒ‹‚ğ§Œä
+        // ãƒã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«ã‚’åˆ¶å¾¡
         Cursor.lockState = CursorLockMode.Locked;
         
         _startWait = new WaitForSeconds(_startDelay);
@@ -36,7 +36,7 @@ public class BattleManager : MonoBehaviour
         _gameMaker.PlayerSpawn();
         StartCoroutine(GameLoop());
 
-        //ƒ^ƒbƒvƒGƒtƒFƒNƒg–³Œø
+        //ã‚¿ãƒƒãƒ—ã‚¨ãƒ•ã‚§ã‚¯ãƒˆç„¡åŠ¹
         Director.Instance.TapDisable();
     }
 
@@ -44,7 +44,7 @@ public class BattleManager : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.None;
 
-        //ƒ^ƒbƒvƒGƒtƒFƒNƒg—LŒø
+        //ã‚¿ãƒƒãƒ—ã‚¨ãƒ•ã‚§ã‚¯ãƒˆæœ‰åŠ¹
         Director.Instance.TapEnable();
     }
 
@@ -53,13 +53,14 @@ public class BattleManager : MonoBehaviour
         //
         //auto st = Director.Instance.GetInGameStatus();
         //
-        // ƒvƒŒƒtƒ@ƒu“Ç‚İ‚İ‚È‚Ì‚©AƒV[ƒ“‚ÌAddtive‚È‚Ì‚©
-        //  –‘O‚É‚·‚×‚Ä‚ÌƒV[ƒ“‚ğ“o˜^‚µ‚Ä‚¨‚­‚Ì‚Í‚ß‚ñ‚Ç‚­‚³‚¢‚¼EEE‚»‚ê‚ÉƒAƒvƒŠ‚Ìƒrƒ‹ƒh‚ª•K—v‚É‚È‚éB
-        //@ƒAƒZƒoƒ“‚ÉƒV[ƒ“‚ğ’Ç‰Á‚µ‚Ä“Ç‚İ‚ß‚½‚è‚·‚é‚Ì‚©H
-        //@„‰Â”\‚ç‚µ‚¢@https://tsubakit1.hateblo.jp/entry/2016/08/23/233604@
+        // ãƒ—ãƒ¬ãƒ•ã‚¡ãƒ–èª­ã¿è¾¼ã¿ãªã®ã‹ã€ã‚·ãƒ¼ãƒ³ã®Addtiveãªã®ã‹
+        //  äº‹å‰ã«ã™ã¹ã¦ã®ã‚·ãƒ¼ãƒ³ã‚’ç™»éŒ²ã—ã¦ãŠãã®ã¯ã‚ã‚“ã©ãã•ã„ããƒ»ãƒ»ãƒ»ãã‚Œã«ã‚¢ãƒ—ãƒªã®ãƒ“ãƒ«ãƒ‰ãŒå¿…è¦ã«ãªã‚‹ã€‚
+        //ã€€ã‚¢ã‚»ãƒãƒ³ã«ã‚·ãƒ¼ãƒ³ã‚’è¿½åŠ ã—ã¦èª­ã¿è¾¼ã‚ãŸã‚Šã™ã‚‹ã®ã‹ï¼Ÿ
+        //ã€€ï¼ï¼å¯èƒ½ã‚‰ã—ã„ã€€https://tsubakit1.hateblo.jp/entry/2016/08/23/233604ã€€
 
     }
 
+    //ãƒ©ã‚¦ãƒ³ãƒ‰ã®ãƒ•ã‚§ãƒ¼ã‚ºç®¡ç†ã‚’ã‚³ãƒ«ãƒ¼ãƒãƒ³ã§ã€‚
     private IEnumerator GameLoop()
     {
         yield return StartCoroutine(RoundStarting());
@@ -69,24 +70,27 @@ public class BattleManager : MonoBehaviour
         SceneManager.LoadScene(_nextScene);
     }
 
+    //ãƒ©ã‚¦ãƒ³ãƒ‰é–‹å§‹
     private IEnumerator RoundStarting()
     {
-        _gameMaker.DisableControl();//ƒvƒŒƒCƒ„[‚ª‘€ì‚Å‚«‚È‚¢‚æ‚¤‚ÉB
+        _gameMaker.DisableControl();    //ãƒ©ã‚¦ãƒ³ãƒ‰é–‹å§‹æ¼”å‡ºãªã©ãŒçµ‚ã‚ã‚‹ã¾ã§ã€ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒæ“ä½œã§ããªã„ã‚ˆã†ã«ã€‚
         yield return _startWait;
     }
 
+    // ãƒ©ã‚¦ãƒ³ãƒ‰ä¸­
     private IEnumerator RoundPlaying()
     {
-        _gameMaker.EnableControl();
+        _gameMaker.EnableControl(); //æ“ä½œå¯èƒ½ã«ã™ã‚‹
         while (!OnGoal())
         {
             yield return null;
         }
     }
 
+    // ãƒ©ã‚¦ãƒ³ãƒ‰ã®çµ‚äº†
     private IEnumerator RoundEnding()
     {
-        _gameMaker.DisableControl();
+        _gameMaker.DisableControl();    //æ“ä½œä¸å¯èƒ½ã«ã™ã‚‹ã€‚
         _jingleAnim.Play("BattleResult");
 
         yield return _endWait;
@@ -95,7 +99,7 @@ public class BattleManager : MonoBehaviour
 
     private bool OnGoal()
     {
-        //TODO: BattleI—¹‚ğ‚ËB
+        //TODO: Battleçµ‚äº†ã‚’ã­ã€‚
         if (Input.GetKeyDown(KeyCode.C))
         {
             return true;

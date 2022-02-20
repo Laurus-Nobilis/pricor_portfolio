@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 
 public class Director : MonoBehaviour
 {
-    //  –{‘ÌƒVƒ“ƒOƒ‹ƒgƒ“
+    //  æœ¬ä½“ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³
     static Director _instance = null;
     public static Director Instance {
         get
@@ -15,22 +15,22 @@ public class Director : MonoBehaviour
             {
                 return _instance;
             }
-            Debug.LogError("TODO:@‘z’èŠOA‰Šú‰»ˆ—•sŠ®‘S. AwakeŒãŒÄ‚Ño‚³‚ê‚é‚Í‚¸");
+            Debug.LogError("MARK:ã€€æƒ³å®šå¤–ã€åˆæœŸåŒ–å‡¦ç†ä¸å®Œå…¨. Awakeå¾Œå‘¼ã³å‡ºã•ã‚Œã‚‹ã¯ãš");
             _instance = new Director();
             return _instance;
         }
     }
 
-    //ƒ^ƒbƒ`ƒK[ƒh
+    //ã‚¿ãƒƒãƒã‚¬ãƒ¼ãƒ‰
     [SerializeField] TouchGuard _touchGuard;
     public TouchGuard TouchGuard { get => _touchGuard; }
     [SerializeField] Alert _alert;
     public Alert Alert { get => _alert; }
 
-    // ƒ^ƒbƒvƒGƒtƒFƒNƒg
+    // ã‚¿ãƒƒãƒ—ã‚¨ãƒ•ã‚§ã‚¯ãƒˆ
     [SerializeField] private TapFx _tapFx;
 
-    /// ƒlƒbƒgƒ[ƒN
+    /// ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯
     NetworkManager _networkManager;
     public NetworkManager NetworkManager {
         get {
