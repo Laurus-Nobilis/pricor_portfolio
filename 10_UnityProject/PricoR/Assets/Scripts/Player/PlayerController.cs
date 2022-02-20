@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public AudioClip _walking;
     bool _isPlayWalkingAudio;
     // Camara
-    [SerializeField] PlayerCamera _playerCam;
+    [SerializeField] PlayerCamera_OLD _playerCam;
     float applySpeed = 0.2f;//振り向き速度。
 
 
@@ -220,8 +220,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
         {
             return;
         }
-        float h = Input.GetAxis("Horizontal");              // 入力デバイスの水平軸をhで定義
-        float v = Input.GetAxis("Vertical");                // 入力デバイスの垂直軸をvで定義
+        float horizontal = Input.GetAxis("Horizontal");              // 入力デバイスの水平軸をhで定義
+        float vertical = Input.GetAxis("Vertical");                // 入力デバイスの垂直軸をvで定義
         bool attack = Input.GetMouseButtonDown(0);
         //anim.SetFloat("Speed", v);                          // Animator側で設定している"Speed"パラメタにvを渡す
         //anim.SetFloat("Direction", h);                      // Animator側で設定している"Direction"パラメタにhを渡す
@@ -247,7 +247,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
 
         // 以下、キャラクターの移動処理
-        velocity = new Vector3(h, 0, v);        // 上下のキー入力からZ軸方向の移動量を取得
+        velocity = new Vector3(horizontal, 0, vertical);        // 上下のキー入力からZ軸方向の移動量を取得
                                                 // キャラクターのローカル空間での方向に変換
         velocity = velocity.sqrMagnitude < 1 ? velocity : velocity.normalized; // h:1,v:1だった場合に、斜移動だけ1を超えるのは良くないでしょ？
                                                                                // velocity = transform.TransformDirection(velocity);
@@ -258,7 +258,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         {
             Attack();
         }
-        else if (v > 0.1 || v < -0.1 || h > 0.1 || h < -0.1)
+        else if (vertical > 0.1 || vertical < -0.1 || horizontal > 0.1 || horizontal < -0.1)
         {
             _isPlayWalkingAudio = true;
             velocity *= forwardSpeed;

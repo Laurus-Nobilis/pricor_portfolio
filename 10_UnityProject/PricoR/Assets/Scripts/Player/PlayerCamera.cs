@@ -3,23 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Photon.Pun;
+
+
 public class PlayerCamera : MonoBehaviourPunCallbacks
 {
-    [SerializeField] private Transform _tgt = null;
-    [SerializeField] Vector3 _tgtDir = new Vector3(0, 0.5f, 0);
-    Camera _cam = null;
-    [SerializeField] float _camDistance = 3f;//�J�����Ƃ̋����B
+    [SerializeField] private Transform _forcusCenter = null; //カメラ中心にするもの
+    [SerializeField] Vector3 _tgtForcusOffset = new Vector3(0, 0.5f, 0);  //カメラ中心からずのオフセット
+    [SerializeField] float _camPosDistance = 3f;//カメラとの距離。
     [SerializeField] private float _turnSpeed = 10.0f;
-    Quaternion _hRot;
-    Quaternion _vRot;
-    float _movX = 0;
-    float _movY = 0;
+
+    Camera _cam = null;
+    float _camVerticalAngle = 0;
+    float _camHorizontalAngle = 0;
     bool _moveCamera = true;
 
     //Property
     public Camera TrackCamera { get { return _cam; } }
-
-    public Quaternion HorizontalRot { get => _hRot; }
 
     private void Start()
     {
@@ -29,14 +28,11 @@ public class PlayerCamera : MonoBehaviourPunCallbacks
         }
 
         _cam = Camera.main;
-        Assert.IsNotNull(_tgt);
+        Assert.IsNotNull(_forcusCenter);
         Assert.IsNotNull(_cam);
 
-        _vRot = Quaternion.Euler(30, 0, 0);
-        _hRot = Quaternion.identity;
         RotateCamera(0, 0);
-        _cam.transform.position = CalcCamPosition();
-        _cam.transform.LookAt(_tgt.position + _tgtDir);
+        TranslateCamera();
     }
 
     private void FixedUpdate()
@@ -51,27 +47,27 @@ public class PlayerCamera : MonoBehaviourPunCallbacks
             _moveCamera = !_moveCamera;
         }
 
-        _movY = _movX = 0;
         if (_moveCamera)
         {
-            _movX = Input.GetAxis("Mouse X");
-            _movY = -Input.GetAxis("Mouse Y");
+            //マウス移動量は既にDeltaTimeの影響下にある。
+            RotateCamera(Input.GetAxis("Mouse X"), -Input.GetAxis("Mouse Y"));
+            TranslateCamera();
         }
-        RotateCamera(_movX, _movY);
-
-        _cam.transform.position = CalcCamPosition();
-        _cam.transform.LookAt(_tgt.position + _tgtDir);
     }
 
-    private void RotateCamera(float move_x, float move_y)
+    private void TranslateCamera()
     {
-        _vRot *= Quaternion.Euler(move_y*_turnSpeed, 0f, 0f);
-        _hRot *= Quaternion.Euler(0f, move_x * _turnSpeed, 0f);
-        _cam.transform.rotation = _hRot * _vRot;
+        var pos = transform.position - _cam.transform.forward * _camPosDistance;
+        //_cam.transform.position = Vector3.Lerp(_cam.transform.position, pos, 10f * Time.deltaTime);//< Lerp不要。操作性悪い。
+        _cam.transform.position = pos;
     }
 
-    private Vector3 CalcCamPosition()
+    private void RotateCamera(float mov_x, float mov_y)
     {
-        return transform.position - _cam.transform.rotation * Vector3.forward * _camDistance;
+        _camHorizontalAngle += mov_x * _turnSpeed;
+        _camVerticalAngle += mov_y * _turnSpeed;
+        _camVerticalAngle = Mathf.Clamp(_camVerticalAngle, -80f, 80f);
+        _cam.transform.localEulerAngles = new Vector3(_camVerticalAngle, _camHorizontalAngle, 0.0f);
     }
 }
+
