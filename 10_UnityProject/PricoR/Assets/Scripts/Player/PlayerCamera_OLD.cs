@@ -5,13 +5,13 @@ using UnityEngine.Assertions;
 using Photon.Pun;
 
 //カメラは自キャラを中心に回転移動する。
-public class PlayerCamera_OLD : MonoBehaviourPunCallbacks
+public class PlayerCamera_OLD : PlayerCameraBase
 {
     [SerializeField] private Transform _tgt = null;
     [SerializeField] Vector3 _tgtDir = new Vector3(0, 0.5f, 0);
-    Camera _cam = null;
     [SerializeField] float _camDistance = 3f;//カメラとの距離。
     [SerializeField] private float _turnSpeed = 10.0f;
+    Camera _cam = null;
     Quaternion _hRot;
     Quaternion _vRot;
     float _movX = 0;
@@ -21,7 +21,7 @@ public class PlayerCamera_OLD : MonoBehaviourPunCallbacks
     //Property
     public Camera TrackCamera { get { return _cam; } }
 
-    public Quaternion HorizontalRot { get => _hRot; }
+    public override Quaternion HorizontalRot { get => _hRot; }
 
     private void Start()
     {
@@ -66,11 +66,16 @@ public class PlayerCamera_OLD : MonoBehaviourPunCallbacks
         _cam.transform.LookAt(_tgt.position + _tgtDir);
     }
 
-    private void RotateCamera(float move_x, float move_y)
+    private void RotateCamera(float horizontal, float vertical)
     {
-        // Quaternion でやる必要が無さそう。＝＞To Docment.
-        _vRot *= Quaternion.Euler(move_y*_turnSpeed, 0f, 0f);
-        _hRot *= Quaternion.Euler(0f, move_x * _turnSpeed, 0f);
+        // 角度制限を付ける。
+        // 四元数からそのまま角度制限つける方法が分からなかったため、事前にオイラー角の方で制限する。
+        float curVRot = (_vRot.eulerAngles.x > 180) ? _vRot.eulerAngles.x - 360 : _vRot.eulerAngles.x;
+        float nextVertical = curVRot + vertical * _turnSpeed;
+        nextVertical = Mathf.Clamp(nextVertical, -80, 80);
+
+        _vRot = Quaternion.Euler(nextVertical, 0f, 0f);
+        _hRot *= Quaternion.Euler(0f, horizontal * _turnSpeed, 0f);
         _cam.transform.rotation = _hRot * _vRot;
     }
 

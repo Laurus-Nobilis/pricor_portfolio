@@ -4,18 +4,28 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using Photon.Pun;
 
-
-public class PlayerCamera : MonoBehaviourPunCallbacks
+/// <summary>
+/// 
+/// 先に Quaternion で行ったが、Vector3の方がシンプルで扱いやすい可能性を考えたので、作成。
+/// </summary>
+public class PlayerCamera : PlayerCameraBase
 {
     [SerializeField] private Transform _forcusCenter = null; //カメラ中心にするもの
     [SerializeField] Vector3 _tgtForcusOffset = new Vector3(0, 0.5f, 0);  //カメラ中心からずのオフセット
     [SerializeField] float _camPosDistance = 3f;//カメラとの距離。
     [SerializeField] private float _turnSpeed = 10.0f;
-
     Camera _cam = null;
     float _camVerticalAngle = 0;
     float _camHorizontalAngle = 0;
     bool _moveCamera = true;
+
+    public override Quaternion HorizontalRot
+    {
+        get
+        {
+            return Quaternion.Euler(0f, _cam.transform.eulerAngles.y, 0f);
+        }
+    }
 
     //Property
     public Camera TrackCamera { get { return _cam; } }
@@ -45,6 +55,7 @@ public class PlayerCamera : MonoBehaviourPunCallbacks
         if (Input.GetMouseButtonDown(1))
         {
             _moveCamera = !_moveCamera;
+            Cursor.lockState = _moveCamera ? CursorLockMode.Locked : CursorLockMode.None;
         }
 
         if (_moveCamera)
@@ -62,10 +73,14 @@ public class PlayerCamera : MonoBehaviourPunCallbacks
         _cam.transform.position = pos;
     }
 
-    private void RotateCamera(float mov_x, float mov_y)
+    /// <summary>
+    /// </summary>
+    /// <param name="horizontal"></param>
+    /// <param name="vertical"></param>
+    private void RotateCamera(float horizontal, float vertical)
     {
-        _camHorizontalAngle += mov_x * _turnSpeed;
-        _camVerticalAngle += mov_y * _turnSpeed;
+        _camHorizontalAngle += horizontal * _turnSpeed;
+        _camVerticalAngle += vertical * _turnSpeed;
         _camVerticalAngle = Mathf.Clamp(_camVerticalAngle, -80f, 80f);
         _cam.transform.localEulerAngles = new Vector3(_camVerticalAngle, _camHorizontalAngle, 0.0f);
     }

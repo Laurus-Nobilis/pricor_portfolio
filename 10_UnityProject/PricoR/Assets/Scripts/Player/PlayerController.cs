@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public AudioClip _walking;
     bool _isPlayWalkingAudio;
     // Camara
-    [SerializeField] PlayerCamera_OLD _playerCam;
+    [SerializeField] PlayerCameraBase _playerCam;
     float applySpeed = 0.2f;//振り向き速度。
 
 
@@ -263,9 +263,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
             _isPlayWalkingAudio = true;
             velocity *= forwardSpeed;
 
-            // 左右のキー入力でキャラクタをY軸で旋回させる
+            // 左右のキー入力で、キャラクタの向きを移動方向にする。それは カメラのY軸に依存した旋回をさせる。
             transform.rotation = Quaternion.Slerp(transform.rotation,
-                                                  Quaternion.LookRotation(_playerCam.HorizontalRot * velocity),
+                                                  Quaternion.LookRotation(_playerCam.HorizontalRot * velocity), //< velocityにカメラ水平角度を反映させたvec3を、LookRotation()でQuaternionに変換する。
                                                   applySpeed);
         }
 
