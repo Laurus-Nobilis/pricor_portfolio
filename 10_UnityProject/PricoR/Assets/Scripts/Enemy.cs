@@ -3,18 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// æ•µã€€ãƒ™ãƒ¼ã‚¹ã¨ã—ã¦æ¨¡ç´¢ã€‚
+/// </summary>
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] Slider _healthSlider;
     [SerializeField] int _health = 10;
 
     private enum State
     {
-        Move, //œpœj
-        Search, //õ“G
-        Tracking, //ˆÚ“®
-        Attack, //UŒ‚
-        Damaged,//”í’e
+        Move, //å¾˜å¾Š
+        Search, //ç´¢æ•µ
+        Tracking, //ç§»å‹•
+        Attack, //æ”»æ’ƒ
+        Damaged,//è¢«å¼¾
     }
     State _curState;
 
@@ -32,22 +34,22 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        //StateMachine“I‚È–‚â‚ç‚Ë‚Î‚ÈB
+        //StateMachineçš„ãªäº‹ã‚„ã‚‰ã­ã°ãªã€‚
         switch(_curState)
         {
-            //œpœj
+            //å¾˜å¾Š
             case State.Move:
 
-            //õ“G
+            //ç´¢æ•µ
             case State.Search:
 
-            //ˆÚ“®
+            //ç§»å‹•
             case State.Tracking:
 
-            //UŒ‚
+            //æ”»æ’ƒ
             case State.Attack:
 
-            //”í’e
+            //è¢«å¼¾
             case State.Damaged:
 
             default:
@@ -57,16 +59,16 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // “–‚½‚Á‚½‚Ì‚ªPlayer‚ÌUŒ‚‚©H
+        // å½“ãŸã£ãŸã®ãŒPlayerã®æ”»æ’ƒã‹ï¼Ÿ
         if(other.CompareTag("PlayerAttack"))
         {
-            // ˆø”‚ªACollider‚Å‚ ‚éˆÈãAUŒ‚‚Ìí—Ş‚ğ”»’è‚·‚é‚½‚ß‚É‚ÍGetComponent()‚¹‚´‚é‚ğ“¾‚È‚¢‚Ì‚¾‚ªA‚·‚é‚©HHH
-            //  ‚»‚à‚»‚àTag‚ª•¶š—ñ”äŠr‚Æ‚¢‚¤‚Ì‚à—Ç‚­v‚¦‚È‚¢B
-            //  •ÊˆÄFManagerƒNƒ‰ƒX‚Å’†‰›WŒ “I‚É‚â‚é‚Ì‚ª‚¢‚¢‚©‚à’m‚ê‚È‚¢B
+            // å¼•æ•°ãŒã€Colliderã§ã‚ã‚‹ä»¥ä¸Šã€æ”»æ’ƒã®ç¨®é¡ã‚’åˆ¤å®šã™ã‚‹ãŸã‚ã«ã¯GetComponent()ã›ã–ã‚‹ã‚’å¾—ãªã„ã®ã ãŒã€ã™ã‚‹ã‹ï¼Ÿï¼Ÿï¼Ÿ
+            //  ãã‚‚ãã‚‚TagãŒæ–‡å­—åˆ—æ¯”è¼ƒã¨ã„ã†ã®ã‚‚è‰¯ãæ€ãˆãªã„ã€‚
+            //  åˆ¥æ¡ˆï¼šManagerã‚¯ãƒ©ã‚¹ã§ä¸­å¤®é›†æ¨©çš„ã«ã‚„ã‚‹ã®ãŒã„ã„ã‹ã‚‚çŸ¥ã‚Œãªã„ã€‚
 
             Debug.Log("HIT! OnDamaged!");
-            _health -= 1;//(‰¼)
-            //ˆê“x“–‚½‚Á‚½‚ç”•bŠÔ“¯‚¶•¨‚É‚Í“–‚½‚ç‚È‚¢–B
+            _health -= 1;//(ä»®)
+            //ä¸€åº¦å½“ãŸã£ãŸã‚‰æ•°ç§’é–“åŒã˜ç‰©ã«ã¯å½“ãŸã‚‰ãªã„äº‹ã€‚
         }
     }
 
