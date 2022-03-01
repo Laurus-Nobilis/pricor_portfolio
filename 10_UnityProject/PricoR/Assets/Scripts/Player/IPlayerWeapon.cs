@@ -7,7 +7,7 @@ public interface IPlayerWeapon
     public void SetNormal();
 
     /// <summary>
-    /// UŒ‚ŠJnƒtƒŒ[ƒ€‚Å‚ÌŒÄ‚Ño‚µ
+    /// æ”»æ’ƒé–‹å§‹ãƒ•ãƒ¬ãƒ¼ãƒ ã§ã®å‘¼ã³å‡ºã—
     /// </summary>
     public void AttackBegin();
     public void AttackPlaying();

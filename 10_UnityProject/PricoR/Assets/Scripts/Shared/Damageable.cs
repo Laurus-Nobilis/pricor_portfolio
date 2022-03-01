@@ -27,6 +27,7 @@ public class Damageable : MonoBehaviour
 
     public void InflictDamage(float damage, GameObject damage_src)
     {
+        Debug.Log("Damageable - damage " + damage.ToString());
         if (_health)
         {
             //ここで何かしらダメージ量に影響を付けるかもしれない

@@ -15,7 +15,7 @@ public class Director : MonoBehaviour
             {
                 return _instance;
             }
-            Debug.LogError("MARK:　想定外、初期化処理不完全. Awake後呼び出されるはず");
+            Debug.LogError("MARK: 開放順を見直す。");
             _instance = new Director();
             return _instance;
         }
